@@ -5,11 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const operationBtn = document.querySelectorAll('.btn-op');
     const functionBtn = document.querySelectorAll('.btn-func')
     const equalBtn = document.querySelector('.btn-equal')
-    const decimal = document.querySelector('.decimal')
+    const historyContainer = document.querySelector('.history-list')
+    const clearHistoryBtn = document.querySelector('.history-clear')
     displayCurrent.textContent = ''
+    const historyList = []
+    let op = null
     let first = null
-    let secondActive = false
     let pendingOp = null
+    let secondActive = false
     const clearAll = function clear() {
         first = null
         secondActive = false
@@ -17,6 +20,17 @@ document.addEventListener('DOMContentLoaded', () => {
         displayCurrent.textContent = ''
         displayHistory.textContent = ''
     }
+    const createElement = (el) => {
+        historyContainer.insertAdjacentHTML(`beforeend`, 
+            `
+            <li class="history-item">
+              <div class="history-expression">${el.first} ${el.op} ${el.second}</div>
+              <div class="history-result">= ${el.result}</div>
+            </li>
+            `
+        );
+
+    };
     const summary = (arg1, arg2) => Number(arg1) + Number(arg2)
     const multiply = (arg1, arg2) => Number(arg1) * Number(arg2)
     const separation = (arg1, arg2) => Number(arg1) / Number(arg2)
@@ -46,13 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     operationBtn.forEach(btn => {
         btn.addEventListener('click', () => {
-            op = btn.dataset.op
+        op = btn.dataset.op
 
                 if (pendingOp && !secondActive) {
                     const second = displayCurrent.textContent
                     const result = calculate(first, second, pendingOp)
                     displayCurrent.textContent = result;
-                    firstNumber = result;
                 } 
                 else {
                     first = displayCurrent.textContent;
@@ -67,9 +80,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const second = displayCurrent.textContent;
         const result = calculate(first, second, pendingOp);
         displayCurrent.textContent = result;
+        displayHistory.textContent =  first + ' ' + op + ' ' + second;
+        if (second !== null && first !== null && result !== null) {
+            historyList.push({
+                first: first,
+                second: second,
+                op: pendingOp,
+                result: result
+            })
+            createElement(historyList.at(-1))
+            clearHistoryBtn.addEventListener('click', () => {
+                historyList.length = 0
+                historyContainer.textContent = ''
+            })
+        };
         secondActive = false
         pendingOp = null
-        displayHistory.textContent =  first + ' ' + op + ' ' + second;
     });
     functionBtn.forEach(btn => {
         btn.addEventListener('click', () => {
