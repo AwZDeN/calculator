@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const equalBtn = document.querySelector('.btn-equal')
     const historyContainer = document.querySelector('.history-list')
     const clearHistoryBtn = document.querySelector('.history-clear')
+    let historyItem = []
     displayCurrent.textContent = ''
     const historyList = []
     let op = null
@@ -20,16 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
         displayCurrent.textContent = ''
         displayHistory.textContent = ''
     }
-    const createElement = (el) => {
+    const createElement = (el, index) => {
         historyContainer.insertAdjacentHTML(`beforeend`, 
             `
-            <li class="history-item">
+            <li class="history-item" data-index='${index}'>
               <div class="history-expression">${el.first} ${el.op} ${el.second}</div>
               <div class="history-result">= ${el.result}</div>
             </li>
-            `
+            ` 
         );
-
+        historyItem = document.querySelectorAll('.history-item')
+        return historyItem
     };
     const summary = (arg1, arg2) => Number(arg1) + Number(arg2)
     const multiply = (arg1, arg2) => Number(arg1) * Number(arg2)
@@ -88,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 op: pendingOp,
                 result: result
             })
-            createElement(historyList.at(-1))
+            createElement(historyList.at(-1), historyList.length - 1)
             clearHistoryBtn.addEventListener('click', () => {
                 historyList.length = 0
                 historyContainer.textContent = ''
@@ -97,6 +99,17 @@ document.addEventListener('DOMContentLoaded', () => {
         secondActive = false
         pendingOp = null
     });
+    historyContainer.addEventListener('click', (e) => {
+        const element = e.target.closest('.history-item');
+        if (!element) return;
+
+        const index = Number(element.dataset.index);
+        const record = historyList[index];
+        if (!record) return;
+
+        displayCurrent.textContent = record.result;
+    });
+        
     functionBtn.forEach(btn => {
         btn.addEventListener('click', () => {
             if (btn.dataset.action === 'clear') {
