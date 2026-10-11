@@ -131,5 +131,3 @@ numbersBtns.forEach(btn => {
     });
 
 })});
-
-})});
