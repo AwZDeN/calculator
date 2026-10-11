@@ -48,22 +48,27 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     };
 
-    numbersBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const value = btn.dataset.num ?? btn.textContent;
-            if (secondActive) {
-                displayCurrent.textContent = '';
-                secondActive = false;
-            }
-            displayCurrent.textContent += value;
-        });
+numbersBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const value = btn.dataset.num ?? btn.textContent;
+        if (secondActive) {
+            displayCurrent.textContent = '';
+            secondActive = false;
+        };
+        if (value === '.' && displayCurrent.textContent.includes('.')) {
+            return;
+        };
+        if (value === '.' && displayCurrent.textContent === '') {
+            displayCurrent.textContent = '0';
+        };
+        displayCurrent.textContent += value;
     });
+});
 
 
     operationBtn.forEach(btn => {
         btn.addEventListener('click', () => {
-        op = btn.dataset.op
-
+            op = btn.dataset.op
                 if (pendingOp && !secondActive) {
                     const second = displayCurrent.textContent
                     const result = calculate(first, second, pendingOp)
@@ -124,5 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }); 
     });
+
+})});
 
 })});
